@@ -5,6 +5,7 @@ import { Container } from "@mui/material";
 import { Paper } from "@mui/material";
 import { useState } from "react";
 import { Button } from "@mui/material";
+import { useEffect } from "react";
 
 export default function User() {
 
@@ -12,6 +13,7 @@ export default function User() {
     // const classes = useStyles();
     const[name, setName] = useState('');
     const[address, setAddress] = useState('');
+    const[users, setUsers] = useState([]);
 
     const handleClick = (e) => {
         e.preventDefault();
@@ -30,6 +32,15 @@ export default function User() {
         });
 
     }
+
+    useEffect(() => {
+        fetch("http://localhost:8080/user/getAll")
+        .then(res=>res.json())
+        .then((result)=>{
+            setUsers(result);
+        })
+    },[])
+    
 
     return (
         <Container>
@@ -61,10 +72,28 @@ export default function User() {
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                     />
-                    <Button variant="contained" onClick={handleClick}>Submit</Button>
+                    <Button variant="contained" onClick={handleClick}>
+                        Submit
+                    </Button>
                 </Box>
                 {/* {name}
                 {address} */}
+            </Paper>
+            
+            <h1>Users</h1>
+            <Paper elevation={3} style={paperStyle}>
+
+                {users.map(user => (
+                    <Paper elevation={6} style={{margin:'10px',padding:'15px',textAlign:'left'}} key={user.id}>
+                        Id: {user.id} <br />
+                        Name: {user.name} <br />
+                        Address: {user.address}
+
+
+                    </Paper>
+                ))
+
+                }
             </Paper>
         </Container>
     );
